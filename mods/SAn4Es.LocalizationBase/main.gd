@@ -12,9 +12,15 @@ var quality = []
 var bait = []
 var lure = []
 
+var shops = []
+
 var baseDir = OS.get_executable_path().get_base_dir() + "/GDWeave/Mods/SAn4Es.LocalizationBase/"
 var lang = "en"
 var languages = ["en"]
+
+
+var fonts = []
+var font = DynamicFont.new()
 func _ready():
 	var dir = Directory.new()
 	if dir.open(baseDir) == OK:
@@ -34,7 +40,9 @@ func _ready():
 		print("Error opening file")
 	lang = sav.get_line()
 	
+	PlayerData.connect("_inventory_refresh", self, "_shop_refresh")
 	SceneTransition.connect("_finished", self, "_On_Test")
+	OptionsMenu.connect("_options_update", self, "_Options_Update")
 	if lang != "en":
 		print(OS.get_executable_path().get_base_dir() + "/strings.csv")
 		var file = File.new()
@@ -86,6 +94,16 @@ func _ready():
 		#	print(csv)
 			bait.append(csv)
 		file.close()
+		
+		file.open(baseDir + lang + "/shop.csv", file.READ)
+		while !file.eof_reached():
+			var csv = file.get_csv_line()
+		#	print(csv)
+			shops.append(csv)
+		file.close()
+		
+		fonts.append(baseDir + lang + "/fonts/base.ttf")
+		fonts.append(baseDir + lang + "/fonts/alt.ttf")
 		
 		readCosmetic(baseDir + lang + "/Cosmetic_Accessory.csv")
 		readCosmetic(baseDir + lang + "/Cosmetic_Bobbers.csv")
@@ -176,42 +194,122 @@ func _button_pressed():
 	# Save the dictionary as JSON (or whatever you want, JSON is convenient here because it's built-in)
 	file.store_line(lang)
 	file.close()
-	
+func _Options_Update():
+	if lang != "en":
+		match PlayerData.player_options.altfont:
+			0: font.font_data = load(fonts[0])
+			1: font.font_data = load(fonts[1])
+		
+		font.size = 28
+		match PlayerData.player_options.altfont:
+			0: load("res://Assets/Themes/main.tres").default_font.font_data = load(fonts[0])
+			1: load("res://Assets/Themes/main.tres").default_font.font_data = load(fonts[1])
 	
 func _On_Test():
 	yield(get_tree().create_timer(0.3), "timeout")
 	
+	PlayerData.connect("_item_equip", self, "_item_equip")
 	createOpt()
-	
-	translateCosmetic()
-	translateItems()
-	translateButtons()
-	translateNPC()
-	translateTips()
-	translateQests()
-#	translateOther()
+	if lang != "en":
+		translateCosmetic()
+		translateItems()
+		translateButtons()
+		translateNPC()
+		translateTips()
+		translateQests()
 	#var node__ = get_node_or_null("/root/playerhud/esc_menu/VBoxContainer")
 	#if node__ != null:
 	#	for _i in node__.get_children():
 	#		print(_i)
+func _shop_refresh():
+	var shopNode = get_node_or_null("/root/playerhud/main/shop/Panel2/MarginContainer2/ScrollContainer/HBoxContainer/VBoxContainer")
+	if shopNode != null:
+		for i in shopNode.get_children():
+			if i is GridContainer:
+				#var file = File.new()
+				#if file.open(baseDir + "/" + i.name + ".txt", File.WRITE) != 0:
+				#	print("Error opening file")
+				#	return
+				var text = []
+				var buttons = i.get_children()
+				for j in buttons:
+					for s in shops:
+						if s[0] != "":
+							j.get_child(0).header = j.get_child(0).header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+							j.get_child(0).body = j.get_child(0).body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+	yield(get_tree().create_timer(0.05), "timeout")
+	var jouButtons = get_node_or_null("/root/playerhud/main/menu/tabs/journal/journal_buttons")
+	for i in jouButtons.get_children():
+		i.connect("pressed", self, "_journal_update")
+		for s in shops:
+			if s[0] != "":
+				i.text = i.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+	
+	_tab_changed()
+	var tab_tool = get_node_or_null("/root/playerhud/main/menu/tabs/inventory/tabs/tab_tool")
+	var tab_creatures = get_node_or_null("/root/playerhud/main/menu/tabs/inventory/tabs/tab_creatures")
+	if tab_tool != null:
+		tab_tool.connect("pressed", self, "_tab_changed")
+		tab_creatures.connect("pressed", self, "_tab_changed")
+	
+func _tab_changed():
+	yield(get_tree().create_timer(0.05), "timeout")
+	
+	_journal_update()
+	
+	_item_equip()
+	var inv = get_node_or_null("/root/playerhud/main/menu/tabs/inventory/Panel/items/")
+	if inv != null:
+		for i in inv.get_children():
+			var item = i.get_child(0).get_node_or_null("tooltip_node")
+			for s in shops:
+				if s[0] != "":
+					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					
+	var jou = get_node_or_null("/root/playerhud/main/menu/tabs/journal/Panel/MarginContainer/HScrollBar/GridContainer")
+	if jou != null:
+		for i in jou.get_children():
+			var item = i.get_node_or_null("tooltip_node")
+			for s in shops:
+				if s[0] != "":
+					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					
+func _journal_update():
+	yield(get_tree().create_timer(0.01), "timeout")
+	var journ = get_node_or_null("/root/playerhud/main/menu/tabs/journal/Panel/MarginContainer/HScrollBar/GridContainer")
+	for i in journ.get_children():
+		i.connect("mouse_entered", self, "_item_entered")
+	
+	var n = get_node_or_null("/root/playerhud/main/menu/tabs/journal/prog/TooltipNode")
+	if n != null:
+		for s in shops:
+			if s[0] != "":
+				n.header = n.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				n.body = n.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 
-#func translateOther():
-	
-	#PlayerData.bai["worms"] = BAIT_DATA["worms"]
-	#PlayerData.BAIT_DATA[0].name = "dsadsa"
-	
-	#for i in PlayerData.BAIT_DATA.keys():
-	#	print(PlayerData.BAIT_DATA[i])
-	#for i in bait:
-	#	if i[0] != "":
-	#		print(PlayerData.BAIT_DATA[i[0]])
-	#		PlayerData.BAIT_DATA[i[0]]["name"] = i[1]
-	#		print(PlayerData.BAIT_DATA[i[0]].name)
-			
-	#for i in quality:
-	#	if i[0] != "":
-	#		PlayerData.QUALITY_DATA[i[0]].name = i[1]
-	#		PlayerData.QUALITY_DATA[i[0]].title = i[2]
+func _item_entered():
+	yield(get_tree().create_timer(0.01), "timeout")
+	var label = get_node_or_null("/root/playerhud/main/menu/tabs/journal/Panel3/body")
+	var labelh = get_node_or_null("/root/playerhud/main/menu/tabs/journal/Panel3/header")
+	if label != null:
+		print(labelh.text)
+		for s in shops:
+			if s[0] != "":
+				label.bbcode_text = label.bbcode_text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				labelh.bbcode_text = labelh.bbcode_text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				
+func _item_equip():
+	var inv = get_node_or_null("/root/playerhud/main/in_game/hotbar/")
+	if inv != null:
+		for i in inv.get_children():
+			var item = i.get_child(0).get_node_or_null("tooltip_node")
+			for s in shops:
+				if s[0] != "":
+					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				
 			
 func translateNPC():
 	var node__ = get_node_or_null("/root/world/Viewport/main/map/main_map/zones/")
@@ -232,9 +330,9 @@ func translateTips():
 			if node_ != null:
 				node_.header = tips[i][1]
 				if "body" in node_:
-					node_.body = tips[i][2]
+					node_.body = tips[i][2].replace("\\n", "\n")
 				if "desc" in node_:
-					node_.desc = tips[i][2]
+					node_.desc = tips[i][2].replace("\\n", "\n")
 
 func translateCosmetic():
 	for i in cosmetic:
@@ -267,11 +365,6 @@ func translateItems():
 		#print(Globals.item_data[i]["file"].item_name)
 
 func translateButtons():
-	var font = DynamicFont.new()
-	font.font_data = load("res://Assets/Themes/unifont-16.0.01.otf")
-	font.size = 24
-	
-	
 	var node = get_node_or_null("/root/main_menu/VBoxContainer")
 	if node != null:
 		for _i in node.get_children():
@@ -279,10 +372,11 @@ func translateButtons():
 	var node1 = get_node_or_null("/root/playerhud/esc_menu/VBoxContainer")
 	if node1 != null:
 		for _i in node1.get_children():
-			_i.set("custom_fonts/font", font)
-	
+			_i.set("custom_fonts/font", font)	
+			
 	for i in buttons.size():
-		if i != buttons.size()-1:
+		if buttons[i][0] != "":
 			var node_ = get_node_or_null(buttons[i][0])
 			if node_ != null:
-				node_.text = buttons[i][1]
+				node_.text = buttons[i][1].replace("\\n", "\n")
+				
