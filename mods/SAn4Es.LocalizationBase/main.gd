@@ -13,6 +13,7 @@ var bait = []
 var lure = []
 
 var shops = []
+var other = []
 
 var baseDir = OS.get_executable_path().get_base_dir() + "/GDWeave/Mods/SAn4Es.LocalizationBase/"
 var lang = "en"
@@ -45,62 +46,15 @@ func _ready():
 	OptionsMenu.connect("_options_update", self, "_Options_Update")
 	if lang != "en":
 		print(OS.get_executable_path().get_base_dir() + "/strings.csv")
-		var file = File.new()
-		file.open(baseDir + lang + "/buttons.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			buttons.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/npc.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			npc.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/tooltips.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			tips.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/quests.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			quests.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/Quality.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			quality.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/Lure.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			lure.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/Bait.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			bait.append(csv)
-		file.close()
-		
-		file.open(baseDir + lang + "/shop.csv", file.READ)
-		while !file.eof_reached():
-			var csv = file.get_csv_line()
-		#	print(csv)
-			shops.append(csv)
-		file.close()
+		writeToArr(buttons, baseDir + lang + "/buttons.csv")
+		writeToArr(npc, baseDir + lang + "/npc.csv")
+		writeToArr(tips, baseDir + lang + "/tooltips.csv")
+		writeToArr(quests, baseDir + lang + "/quests.csv")
+		writeToArr(quality, baseDir + lang + "/Quality.csv")
+		writeToArr(lure, baseDir + lang + "/Lure.csv")
+		writeToArr(bait, baseDir + lang + "/Bait.csv")
+		writeToArr(shops, baseDir + lang + "/shop.csv")
+		writeToArr(other, baseDir + lang + "/other.csv")
 		
 		fonts.append(baseDir + lang + "/fonts/base.ttf")
 		fonts.append(baseDir + lang + "/fonts/alt.ttf")
@@ -136,6 +90,15 @@ func _ready():
 		readItems(baseDir + lang + "/Item_Tools.csv")
 		readItems(baseDir + lang + "/Items.csv")
 		readItems(baseDir + lang + "/Prop_Items.csv")
+
+func writeToArr(arr, path):
+	var file = File.new()
+	file.open(path, file.READ)
+	while !file.eof_reached():
+		var csv = file.get_csv_line()
+	#	print(csv)
+		arr.append(csv)
+	file.close()
 
 func readCosmetic(s):
 	var file = File.new()
@@ -178,7 +141,6 @@ func createOpt():
 	button.connect("pressed", self, "_button_pressed")
 	var menuNode = get_node_or_null("/root/main_menu")
 	if menuNode != null:
-		print("NOD")
 		menuNode.add_child(chooseLang)
 		menuNode.add_child(button)
 	
@@ -204,13 +166,22 @@ func _Options_Update():
 		match PlayerData.player_options.altfont:
 			0: load("res://Assets/Themes/main.tres").default_font.font_data = load(fonts[0])
 			1: load("res://Assets/Themes/main.tres").default_font.font_data = load(fonts[1])
-	
+
+func menu_entered(e):
+	if e == 6:
+		translateDiag()
+
 func _On_Test():
 	yield(get_tree().create_timer(0.3), "timeout")
 	
 	PlayerData.connect("_item_equip", self, "_item_equip")
 	createOpt()
 	if lang != "en":
+		
+		var hud = get_node_or_null("/root/playerhud")
+		if hud != null:
+			hud.connect("_menu_entered", self, "menu_entered")
+		
 		translateCosmetic()
 		translateItems()
 		translateButtons()
@@ -225,6 +196,11 @@ func _shop_refresh():
 	var shopNode = get_node_or_null("/root/playerhud/main/shop/Panel2/MarginContainer2/ScrollContainer/HBoxContainer/VBoxContainer")
 	if shopNode != null:
 		for i in shopNode.get_children():
+			if i is Label:
+				for s in other:
+					if s[0] != "":
+						i.text = i.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+			
 			if i is GridContainer:
 				#var file = File.new()
 				#if file.open(baseDir + "/" + i.name + ".txt", File.WRITE) != 0:
@@ -241,17 +217,75 @@ func _shop_refresh():
 	var jouButtons = get_node_or_null("/root/playerhud/main/menu/tabs/journal/journal_buttons")
 	for i in jouButtons.get_children():
 		i.connect("pressed", self, "_journal_update")
-		for s in shops:
+		for s in other:
 			if s[0] != "":
 				i.text = i.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 	
+	var butt = get_node_or_null("/root/playerhud/main/menu/buttons")
+	if butt != null:
+		for i in butt.get_children():
+			i.connect("_pressed", self, "translateTitle")
+	translateTitle(1)
 	_tab_changed()
+	_pitch_change(1)
+	var vos = get_node_or_null("/root/playerhud/main/menu/tabs/outfit/Panel4/tabs/misc/HBoxContainer/vbox/voice_options/HBoxContainer/HSlider")
+	var vos1 = get_node_or_null("/root/playerhud/main/menu/tabs/outfit/Panel4/tabs/misc/HBoxContainer/vbox/voice_options/HBoxContainer2/speed")
+	if vos != null:
+		vos.connect("value_changed", self, "_pitch_change")
+		vos1.connect("value_changed", self, "_pitch_change")
+	
+	
 	var tab_tool = get_node_or_null("/root/playerhud/main/menu/tabs/inventory/tabs/tab_tool")
 	var tab_creatures = get_node_or_null("/root/playerhud/main/menu/tabs/inventory/tabs/tab_creatures")
 	if tab_tool != null:
 		tab_tool.connect("pressed", self, "_tab_changed")
 		tab_creatures.connect("pressed", self, "_tab_changed")
+
+func translateDiag():
+	var n = get_node_or_null("/root/playerhud/main/dialogue/Panel/Panel2/bplabel")
+	if n != null:
+		for s in other:
+			if s[0] != "":
+				n.text = n.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 	
+	var hud = get_node_or_null("/root/playerhud")
+	var s_ = ""
+	for i in hud.dialogue_text:
+		s_ += String(i)
+	if hud != null:
+		for s in other:
+			if s[0] != "":
+				s_ = s_.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+		if s_ != "":
+			hud.dialogue._open(s_.split(""))
+		#yield(get_tree().create_timer(0.01), "timeout")
+		#hud.dialogue_text = s_.split("")
+		#print(hud.dialogue_text)
+
+func translateTitle(v):
+	yield(get_tree().create_timer(0.01), "timeout")
+	var title = get_node_or_null("/root/playerhud/main/menu/Panel2/bplabel")
+	if title != null:
+		for s in other:
+			if s[0] != "":
+				title.text = title.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				
+	title = get_node_or_null("/root/playerhud/main/shop/Panel4/bplabel")
+	if title != null:
+		for s in other:
+			if s[0] != "":
+				title.text = title.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+	
+
+func _pitch_change(v):
+	yield(get_tree().create_timer(0.01), "timeout")
+	var vo = get_node_or_null("/root/playerhud/main/menu/tabs/outfit/Panel4/tabs/misc/HBoxContainer/vbox/voice_options/HBoxContainer/Label")
+	var vo1 = get_node_or_null("/root/playerhud/main/menu/tabs/outfit/Panel4/tabs/misc/HBoxContainer/vbox/voice_options/HBoxContainer2/speedlbl")
+	if vo != null:
+		for s in other:
+			if s[0] != "":
+				vo.text = vo.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				vo1.text = vo1.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 func _tab_changed():
 	yield(get_tree().create_timer(0.05), "timeout")
 	
@@ -262,7 +296,7 @@ func _tab_changed():
 	if inv != null:
 		for i in inv.get_children():
 			var item = i.get_child(0).get_node_or_null("tooltip_node")
-			for s in shops:
+			for s in other:
 				if s[0] != "":
 					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
@@ -271,20 +305,20 @@ func _tab_changed():
 	if jou != null:
 		for i in jou.get_children():
 			var item = i.get_node_or_null("tooltip_node")
-			for s in shops:
+			for s in other:
 				if s[0] != "":
 					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 					
 func _journal_update():
-	yield(get_tree().create_timer(0.01), "timeout")
+	yield(get_tree().create_timer(0.05), "timeout")
 	var journ = get_node_or_null("/root/playerhud/main/menu/tabs/journal/Panel/MarginContainer/HScrollBar/GridContainer")
 	for i in journ.get_children():
 		i.connect("mouse_entered", self, "_item_entered")
 	
 	var n = get_node_or_null("/root/playerhud/main/menu/tabs/journal/prog/TooltipNode")
 	if n != null:
-		for s in shops:
+		for s in other:
 			if s[0] != "":
 				n.header = n.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 				n.body = n.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
@@ -295,7 +329,7 @@ func _item_entered():
 	var labelh = get_node_or_null("/root/playerhud/main/menu/tabs/journal/Panel3/header")
 	if label != null:
 		print(labelh.text)
-		for s in shops:
+		for s in other:
 			if s[0] != "":
 				label.bbcode_text = label.bbcode_text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 				labelh.bbcode_text = labelh.bbcode_text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
@@ -305,7 +339,7 @@ func _item_equip():
 	if inv != null:
 		for i in inv.get_children():
 			var item = i.get_child(0).get_node_or_null("tooltip_node")
-			for s in shops:
+			for s in other:
 				if s[0] != "":
 					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
