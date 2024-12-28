@@ -14,6 +14,7 @@ var lure = []
 
 var shops = []
 var other = []
+var dialog = []
 
 var baseDir = OS.get_executable_path().get_base_dir() + "/GDWeave/Mods/SAn4Es.LocalizationBase/"
 var lang = "en"
@@ -55,6 +56,7 @@ func _ready():
 		writeToArr(bait, baseDir + lang + "/Bait.csv")
 		writeToArr(shops, baseDir + lang + "/shop.csv")
 		writeToArr(other, baseDir + lang + "/other.csv")
+		writeToArr(dialog, baseDir + lang + "/dialog.csv")
 		
 		fonts.append(baseDir + lang + "/fonts/base.ttf")
 		fonts.append(baseDir + lang + "/fonts/alt.ttf")
@@ -209,10 +211,11 @@ func _shop_refresh():
 				var text = []
 				var buttons = i.get_children()
 				for j in buttons:
-					for s in shops:
-						if s[0] != "":
-							j.get_child(0).header = j.get_child(0).header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
-							j.get_child(0).body = j.get_child(0).body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					if j is Button:
+						for s in shops:
+							if s[0] != "":
+								j.get_child(0).header = j.get_child(0).header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+								j.get_child(0).body = j.get_child(0).body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 	yield(get_tree().create_timer(0.05), "timeout")
 	var jouButtons = get_node_or_null("/root/playerhud/main/menu/tabs/journal/journal_buttons")
 	for i in jouButtons.get_children():
@@ -244,7 +247,7 @@ func _shop_refresh():
 func translateDiag():
 	var n = get_node_or_null("/root/playerhud/main/dialogue/Panel/Panel2/bplabel")
 	if n != null:
-		for s in other:
+		for s in dialog:
 			if s[0] != "":
 				n.text = n.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 	
@@ -253,7 +256,7 @@ func translateDiag():
 	for i in hud.dialogue_text:
 		s_ += String(i)
 	if hud != null:
-		for s in other:
+		for s in dialog:
 			if s[0] != "":
 				s_ = s_.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 		if s_ != "":
