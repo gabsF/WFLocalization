@@ -51,9 +51,9 @@ func _ready():
 		writeToArr(npc, baseDir + lang + "/npc.csv")
 		writeToArr(tips, baseDir + lang + "/tooltips.csv")
 		writeToArr(quests, baseDir + lang + "/quests.csv")
-		writeToArr(quality, baseDir + lang + "/Quality.csv")
-		writeToArr(lure, baseDir + lang + "/Lure.csv")
-		writeToArr(bait, baseDir + lang + "/Bait.csv")
+		#writeToArr(quality, baseDir + lang + "/Quality.csv")
+		#writeToArr(lure, baseDir + lang + "/Lure.csv")
+		#writeToArr(bait, baseDir + lang + "/Bait.csv")
 		writeToArr(shops, baseDir + lang + "/shop.csv")
 		writeToArr(other, baseDir + lang + "/other.csv")
 		writeToArr(dialog, baseDir + lang + "/dialog.csv")
@@ -195,6 +195,7 @@ func _On_Test():
 	#	for _i in node__.get_children():
 	#		print(_i)
 func _shop_refresh():
+	
 	var shopNode = get_node_or_null("/root/playerhud/main/shop/Panel2/MarginContainer2/ScrollContainer/HBoxContainer/VBoxContainer")
 	if shopNode != null:
 		for i in shopNode.get_children():
@@ -202,6 +203,8 @@ func _shop_refresh():
 				for s in other:
 					if s[0] != "":
 						i.text = i.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+						if lang == "test":
+							i.text = "test"
 			
 			if i is GridContainer:
 				#var file = File.new()
@@ -216,6 +219,21 @@ func _shop_refresh():
 							if s[0] != "":
 								j.get_child(0).header = j.get_child(0).header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 								j.get_child(0).body = j.get_child(0).body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+							if lang == "test":
+								j.get_child(0).header = "test"
+								j.get_child(0).body = "test"
+	
+	var sellAllNode = get_node_or_null("/root/playerhud/main/shop/Panel2/MarginContainer2/ScrollContainer/HBoxContainer/VBoxContainer/sell_all_container")
+	if sellAllNode != null:
+		for s in other:
+			if s[0] != "":
+				sellAllNode.get_child(0).text = sellAllNode.get_child(0).text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				sellAllNode.get_child(1).get_child(0).text = sellAllNode.get_child(1).get_child(0).text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					sellAllNode.get_child(0).text = "test"
+					sellAllNode.get_child(1).get_child(0).text = "test"
+		
+		
 	yield(get_tree().create_timer(0.05), "timeout")
 	var jouButtons = get_node_or_null("/root/playerhud/main/menu/tabs/journal/journal_buttons")
 	for i in jouButtons.get_children():
@@ -223,6 +241,8 @@ func _shop_refresh():
 		for s in other:
 			if s[0] != "":
 				i.text = i.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					i.text = "test"
 	
 	var butt = get_node_or_null("/root/playerhud/main/menu/buttons")
 	if butt != null:
@@ -250,6 +270,8 @@ func translateDiag():
 		for s in dialog:
 			if s[0] != "":
 				n.text = n.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					n.text = "test"
 	
 	var hud = get_node_or_null("/root/playerhud")
 	var s_ = ""
@@ -272,12 +294,16 @@ func translateTitle(v):
 		for s in other:
 			if s[0] != "":
 				title.text = title.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					title.text = "test"
 				
 	title = get_node_or_null("/root/playerhud/main/shop/Panel4/bplabel")
 	if title != null:
 		for s in other:
 			if s[0] != "":
 				title.text = title.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					title.text = "test"
 	
 
 func _pitch_change(v):
@@ -289,6 +315,9 @@ func _pitch_change(v):
 			if s[0] != "":
 				vo.text = vo.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 				vo1.text = vo1.text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					vo.text = "test"
+					vo1.text = "test"
 func _tab_changed():
 	yield(get_tree().create_timer(0.05), "timeout")
 	
@@ -312,6 +341,9 @@ func _tab_changed():
 				if s[0] != "":
 					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+					if lang == "test":
+						item.header = "test"
+						item.body = "test"
 					
 func _journal_update():
 	yield(get_tree().create_timer(0.05), "timeout")
@@ -325,6 +357,9 @@ func _journal_update():
 			if s[0] != "":
 				n.header = n.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 				n.body = n.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					n.header = "test"
+					n.body = "test"
 
 func _item_entered():
 	yield(get_tree().create_timer(0.01), "timeout")
@@ -336,6 +371,9 @@ func _item_entered():
 			if s[0] != "":
 				label.bbcode_text = label.bbcode_text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 				labelh.bbcode_text = labelh.bbcode_text.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
+				if lang == "test":
+					label.bbcode_text = "test"
+					labelh.bbcode_text = "test"
 				
 func _item_equip():
 	var inv = get_node_or_null("/root/playerhud/main/in_game/hotbar/")
@@ -346,9 +384,13 @@ func _item_equip():
 				if s[0] != "":
 					item.header = item.header.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
 					item.body = item.body.replace(s[0].replace("\\n", "\n"), s[1].replace("\\n", "\n"))
-				
+					if lang == "test":
+						item.header = "test"
+						item.body = "test"
 			
 func translateNPC():
+	
+		
 	var node__ = get_node_or_null("/root/world/Viewport/main/map/main_map/zones/")
 	if node__ != null:
 		for _i in node__.get_children():
@@ -359,17 +401,26 @@ func translateNPC():
 			var node_ = get_node_or_null(npc[i][0])
 			if node_ != null:
 				node_.text = npc[i][1]
-				
+				if lang == "test":
+					node_.text = "test"
 func translateTips():
+	
+	
 	for i in tips.size():
 		if i != tips.size()-1:
 			var node_ = get_node_or_null(tips[i][0])
 			if node_ != null:
 				node_.header = tips[i][1]
+				if lang == "test":
+					node_.header = "test"
 				if "body" in node_:
 					node_.body = tips[i][2].replace("\\n", "\n")
+					if lang == "test":
+						node_.body = "test"
 				if "desc" in node_:
 					node_.desc = tips[i][2].replace("\\n", "\n")
+					if lang == "test":
+						node_.desc = "test"
 
 func translateCosmetic():
 	for i in cosmetic:
@@ -377,17 +428,24 @@ func translateCosmetic():
 		#if Globals.cosmetic_data[i[0]]["file"].name != null:
 			Globals.cosmetic_data[i[0]]["file"].name = i[1]
 			Globals.cosmetic_data[i[0]]["file"].desc = i[2]
+			if lang == "test":
+				Globals.cosmetic_data[i[0]]["file"].name = "test"
+				Globals.cosmetic_data[i[0]]["file"].desc = "test"
 			
 func translateQests():
+		
 	for i in quests:
 		if i[0] != "":
 			for j in PlayerData.current_quests.keys():
 				if i[0] == PlayerData.current_quests[j].action or i[0] == PlayerData.current_quests[j].goal_id:
 					PlayerData.current_quests[j].title = i[1]
+					if lang == "test":
+						PlayerData.current_quests[j].title = "test"
 	#for i in PlayerData.current_quests.keys():
 		#print(PlayerData.current_quests[i].title)
 				
 func translateItems():
+		
 	for i in items:
 		if i[0] != "":
 		#if Globals.cosmetic_data[i[0]]["file"].name != null:
@@ -395,13 +453,21 @@ func translateItems():
 			Globals.item_data[i[0]]["file"].item_description = i[2]
 			Globals.item_data[i[0]]["file"].help_text = i[3]
 			Globals.item_data[i[0]]["file"].catch_blurb = i[4]
-		
+			if lang == "test":
+				Globals.item_data[i[0]]["file"].item_name = "test"
+				Globals.item_data[i[0]]["file"].item_description = "test"
+				Globals.item_data[i[0]]["file"].help_text = "test"
+				Globals.item_data[i[0]]["file"].catch_blurb = "test"
+			
 	#for i in Globals.item_data.keys():
 		#Globals.item_data[i]["file"].item_name
 		#print(i)
 		#print(Globals.item_data[i]["file"].item_name)
 
 func translateButtons():
+	
+
+	
 	var node = get_node_or_null("/root/main_menu/VBoxContainer")
 	if node != null:
 		for _i in node.get_children():
@@ -416,4 +482,8 @@ func translateButtons():
 			var node_ = get_node_or_null(buttons[i][0])
 			if node_ != null:
 				node_.text = buttons[i][1].replace("\\n", "\n")
+				if lang == "test":
+					node_.text = "test"
+				
+	
 				
