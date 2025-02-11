@@ -1,8 +1,11 @@
 # Localization base for WEBFISHING
+This mod is a base for WEBFISHING translation.
+The mod reads files in the language folder, applying lines from there to the game each time the level is loaded (transition animation).
+This means that you can write your own localization without writing code.
 ### Installation:
-1. Download and install GDWeave
-2. Download mod from releases page, unzip to WEBFISHING\GDWeave\Mods
-3. Download localization, unzip to WEBFISHING\GDWeave\Mods\SAn4Es.LocalizationBase
+1. Download and install [GDWeave](https://thunderstore.io/c/webfishing/p/NotNet/GDWeave/)
+2. Download mod from releases page, unzip to _WEBFISHING\GDWeave\Mods_
+3. Download localization, unzip to _WEBFISHING\GDWeave\Mods\SAn4Es.LocalizationBase_
 4. Launch the game, select the language in the upper left corner and restart the game
 
 ### How to translate
