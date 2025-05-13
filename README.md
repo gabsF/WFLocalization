@@ -1,16 +1,12 @@
-# Localization base for WEBFISHING
-This mod is a base for WEBFISHING translation.
-The mod reads files in the language folder, applying lines from there to the game each time the level is loaded (transition animation).
-This means that you can write your own localization without writing code.
-### Installation:
-1. Download and install [GDWeave](https://thunderstore.io/c/webfishing/p/NotNet/GDWeave/)
-2. Download mod from releases page, unzip to _WEBFISHING\GDWeave\Mods_
-3. Download localization, unzip to _WEBFISHING\GDWeave\Mods\SAn4Es.LocalizationBase_
-4. Launch the game, select the language in the upper left corner and restart the game
+# Tradução PT-BR para WEBFISHING
+O código deste repositório é responsável por ser a base da tradução, feito pelo [SAn4Es-TV](https://github.com/SAn4Es-TV)
+O mod lê os arquivos da pasta de "language", aplicando as linhas cada vez quando o jogo recarrega o mapa.
 
-### How to translate
-1. Download the archive with English language files from the releases page
-2. Replace the English text with the text of your language (to see how to translate and which lines, for example, you can download the Russian localization) (Maybe I'll write a normal guide)
+Uma certa parte do código foi alterado para possibilitar de alguns textos serem traduzidos, ainda não está 100%, mas traduzi até onde eu conseguia.
+Por isso, vai ter bugs e textos não traduzidos, então já fique ciente disso.
 
-This mod may contain errors, bugs, and untranslated moments, if you notice something, please report it on github. 
-#### Changes to the mod are welcome, we can make it better!
+### Instalação:
+1. Baixe e instale [GDWeave](https://thunderstore.io/c/webfishing/p/NotNet/GDWeave/)
+2. Baixe o mod aqui e extraia em _WEBFISHING\GDWeave\Mods_
+3. Baixe a tradução aqui e extraia em _WEBFISHING\GDWeave\Mods\SAn4Es.LocalizationBase_
+4. Inicia o jogo e no canto superior esquerdo terá opção de selecionar o idioma

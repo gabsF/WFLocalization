@@ -428,6 +428,7 @@ func translateCosmetic():
 		#if Globals.cosmetic_data[i[0]]["file"].name != null:
 			Globals.cosmetic_data[i[0]]["file"].name = i[1]
 			Globals.cosmetic_data[i[0]]["file"].desc = i[2]
+			Globals.cosmetic_data[i[0]]["file"].title = i[3]
 			if lang == "test":
 				Globals.cosmetic_data[i[0]]["file"].name = "test"
 				Globals.cosmetic_data[i[0]]["file"].desc = "test"
@@ -453,6 +454,7 @@ func translateItems():
 			Globals.item_data[i[0]]["file"].item_description = i[2]
 			Globals.item_data[i[0]]["file"].help_text = i[3]
 			Globals.item_data[i[0]]["file"].catch_blurb = i[4]
+			Globals.item_data[i[0]]["file"].test = i[5]
 			if lang == "test":
 				Globals.item_data[i[0]]["file"].item_name = "test"
 				Globals.item_data[i[0]]["file"].item_description = "test"
