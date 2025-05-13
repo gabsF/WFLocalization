@@ -6,7 +6,6 @@ Uma certa parte do código foi alterado para possibilitar de alguns textos serem
 Por isso, vai ter bugs e textos não traduzidos, então já fique ciente disso.
 
 ### Instalação:
-1. Baixe e instale [GDWeave](https://thunderstore.io/c/webfishing/p/NotNet/GDWeave/)
-2. Baixe o mod aqui e extraia em _WEBFISHING\GDWeave\Mods_
-3. Baixe a tradução aqui e extraia em _WEBFISHING\GDWeave\Mods\SAn4Es.LocalizationBase_
-4. Inicia o jogo e no canto superior esquerdo terá opção de selecionar o idioma
+1. Baixe e instale [GDWeave](https://thunderstore.io/c/webfishing/p/NotNet/GDWeave/), extraindo na pasta do jogo
+2. Baixe a tradução [aqui](https://github.com/gabsF/WFLocalization/releases/download/1.0/SAn4Es.LocalizationBase.7z) e extraia em _WEBFISHING\GDWeave\Mods_
+3. Inicia o jogo e no canto superior esquerdo terá opção de selecionar o idioma
