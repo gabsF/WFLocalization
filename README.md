@@ -2,7 +2,7 @@
 O código deste repositório é responsável por ser a base da tradução, feito pelo [SAn4Es-TV](https://github.com/SAn4Es-TV)
 O mod lê os arquivos da pasta de "language", aplicando as linhas cada vez quando o jogo recarrega o mapa.
 
-Uma certa parte do código foi alterado para possibilitar de alguns textos serem traduzidos, ainda não está 100%, mas traduzi até onde eu conseguia.
+Uma certa parte do código foi alterada para possibilitar de alguns textos serem traduzidos, ainda não está 100%, mas traduzi até onde eu conseguia.
 Por isso, vai ter bugs e textos não traduzidos, então já fique ciente disso.
 
 ### Instalação:
